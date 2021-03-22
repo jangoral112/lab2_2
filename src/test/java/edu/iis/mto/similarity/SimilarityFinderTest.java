@@ -6,9 +6,5 @@ import org.junit.jupiter.api.Test;
 
 class SimilarityFinderTest {
 
-    @Test
-    void test() {
-        fail("Not yet implemented");
-    }
 
 }

@@ -7,6 +7,8 @@ import edu.iis.mto.searcher.SearchResult;
 import edu.iis.mto.searcher.SequenceSearcher;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 class SimilarityFinderTest {
 
     @Test
@@ -60,7 +62,7 @@ class SimilarityFinderTest {
     }
 
     @Test
-    void shouldReturnOneWhenBothSequencesAreEqual() {
+    public void shouldReturnOneWhenBothSequencesAreEqual() {
         // give
         SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> SearchResult.builder().withFound(true).build());
 
@@ -76,13 +78,43 @@ class SimilarityFinderTest {
     }
 
     @Test
-    void shouldReturnZeroWhenSequencesHaveNoCommonElements() {
+    public void shouldReturnZeroWhenSequencesHaveNoCommonElements() {
         // give
         SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> SearchResult.builder().withFound(false).build());
 
         int[] seq1 = {1, 2, 3};
         int[] seq2 = {4, 5, 6};
         double expectedResult = 0;
+
+        // when
+        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void shouldReturnHalfWhenGivenIntersectingSequencesAndEqualSequencesLengths() {
+        // give
+        SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> {
+            if(Arrays.equals(sequence, new int[] {5, 8, 7}) == false) {
+                return null;
+            }
+
+            if(elem == 9) {
+                return SearchResult.builder().withFound(false).build();
+            } else if (elem == 5) {
+                return SearchResult.builder().withFound(true).build();
+            } else if (elem == 7) {
+                return SearchResult.builder().withFound(true).build();
+            }
+
+            return null;
+        });
+
+        int[] seq1 = {9, 5, 7};
+        int[] seq2 = {5, 8, 7};
+        double expectedResult = 0.5;
 
         // when
         double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);

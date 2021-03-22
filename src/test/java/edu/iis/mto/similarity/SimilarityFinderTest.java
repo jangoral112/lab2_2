@@ -7,6 +7,7 @@ import edu.iis.mto.searcher.SearchResult;
 import edu.iis.mto.searcher.SequenceSearcher;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 class SimilarityFinderTest {
@@ -153,5 +154,34 @@ class SimilarityFinderTest {
 
         // then
         assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void shouldNotInvokeSequenceSearcherSearchWhenBothSequencesAreEmpty() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        SequenceSearcher sequenceSearcherMock = new SequenceSearcher() {
+            private int searchInvocationCount = 0;
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                searchInvocationCount++;
+                return null;
+            }
+        };
+
+        SimilarityFinder similarityFinder = new SimilarityFinder(sequenceSearcherMock);
+
+        int[] seq1 = {};
+        int[] seq2 = {};
+        double expectedSearchInvocationCount = 1;
+
+        // when
+        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        Field searchInvocationCountField =  sequenceSearcherMock.getClass().getDeclaredField("searchInvocationCount");
+        searchInvocationCountField.setAccessible(true);
+        int numberOfSearchInvocations = searchInvocationCountField.getInt(sequenceSearcherMock);
+        assertEquals(expectedSearchInvocationCount, numberOfSearchInvocations);
     }
 }

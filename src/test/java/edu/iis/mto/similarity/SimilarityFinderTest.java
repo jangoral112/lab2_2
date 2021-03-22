@@ -46,7 +46,6 @@ class SimilarityFinderTest {
     @Test
     public void shouldReturnZeroWhenSecondArgumentSequenceIsEmpty() {
         // give
-
         SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> SearchResult.builder().withFound(false).build());
 
         int[] seq1 = {120, 99};
@@ -58,6 +57,23 @@ class SimilarityFinderTest {
 
         // then
         assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void shouldReturnOneWhenBothSequencesAreEqual() {
+        // give
+        SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> SearchResult.builder().withFound(true).build());
+
+        int[] seq1 = {44, 88};
+        int[] seq2 = {44, 88};
+        double expectedResult = 1;
+
+        // when
+        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        assertEquals(expectedResult, result);
+
     }
 
 }

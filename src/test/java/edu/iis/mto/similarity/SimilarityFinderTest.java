@@ -1,6 +1,8 @@
 package edu.iis.mto.similarity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
 import static org.junit.jupiter.api.Assertions.fail;
 
 import edu.iis.mto.searcher.SearchResult;
@@ -243,5 +245,34 @@ class SimilarityFinderTest {
         int passedElem =  passedElemField.getInt(sequenceSearcherMock);
 
         assertEquals(expectedPassedElement, passedElem);
+    }
+
+    @Test
+    public void shouldInvokeSequenceSearcherSearchWithGivenSequenceArgument() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        SequenceSearcher sequenceSearcherMock = new SequenceSearcher() {
+            private int[] passedSequence = {};
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                passedSequence = sequence.clone();
+                return SearchResult.builder().withFound(true).build();
+            }
+        };
+
+        SimilarityFinder similarityFinder = new SimilarityFinder(sequenceSearcherMock);
+
+        int[] seq1 = {6};
+        int[] seq2 = {90, -88, 111, 33};
+
+        // when
+        similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        Field passedSequenceField =  sequenceSearcherMock.getClass().getDeclaredField("passedSequence");
+        passedSequenceField.setAccessible(true);
+        int[] passedSequence =  (int [])passedSequenceField.get(sequenceSearcherMock);
+
+        assertArrayEquals(seq2, passedSequence);
     }
 }

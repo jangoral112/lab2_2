@@ -214,4 +214,34 @@ class SimilarityFinderTest {
 
         assertEquals(expectedSearchInvocationCount, numberOfSearchInvocations);
     }
+
+    @Test
+    public void shouldInvokeSequenceSearcherSearchWithThreeAsElementArgument() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        SequenceSearcher sequenceSearcherMock = new SequenceSearcher() {
+            private int passedElem = 0;
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                passedElem = elem;
+                return SearchResult.builder().withFound(true).build();
+            }
+        };
+
+        SimilarityFinder similarityFinder = new SimilarityFinder(sequenceSearcherMock);
+
+        int[] seq1 = {3};
+        int[] seq2 = {-4, 88, 100};
+        int expectedPassedElement = 3;
+
+        // when
+        similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        Field passedElemField =  sequenceSearcherMock.getClass().getDeclaredField("passedElem");
+        passedElemField.setAccessible(true);
+        int passedElem =  passedElemField.getInt(sequenceSearcherMock);
+
+        assertEquals(expectedPassedElement, passedElem);
+    }
 }

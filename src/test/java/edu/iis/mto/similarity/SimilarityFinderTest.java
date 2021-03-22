@@ -26,4 +26,21 @@ class SimilarityFinderTest {
         assertEquals(expectedValue, result);
     }
 
+    @Test
+    public void shouldReturnZeroWhenFirstArgumentSequenceIsEmpty() {
+        // give
+
+        SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> null);
+
+        int[] seq1 = {};
+        int[] seq2 = {1, 4};
+        double expectedResult = 0;
+
+        // when
+        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        assertEquals(expectedResult, result);
+    }
+
 }

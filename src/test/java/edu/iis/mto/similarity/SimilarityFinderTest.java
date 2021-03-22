@@ -184,4 +184,34 @@ class SimilarityFinderTest {
         int numberOfSearchInvocations = searchInvocationCountField.getInt(sequenceSearcherMock);
         assertEquals(expectedSearchInvocationCount, numberOfSearchInvocations);
     }
+
+    @Test
+    public void shouldInvokeSequenceSearcherSearchFourTimes() throws NoSuchFieldException, IllegalAccessException {
+        // given
+        SequenceSearcher sequenceSearcherMock = new SequenceSearcher() {
+            private int searchInvocationCount = 0;
+
+            @Override
+            public SearchResult search(int elem, int[] sequence) {
+                searchInvocationCount++;
+                return SearchResult.builder().withFound(true).build();
+            }
+        };
+
+        SimilarityFinder similarityFinder = new SimilarityFinder(sequenceSearcherMock);
+
+        int[] seq1 = {1, 3, 9, 4};
+        int[] seq2 = {10, 5, 12, 11, 54, 9};
+        int expectedSearchInvocationCount = 4;
+
+        // when
+        similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        Field searchInvocationCountField =  sequenceSearcherMock.getClass().getDeclaredField("searchInvocationCount");
+        searchInvocationCountField.setAccessible(true);
+        int numberOfSearchInvocations = searchInvocationCountField.getInt(sequenceSearcherMock);
+
+        assertEquals(expectedSearchInvocationCount, numberOfSearchInvocations);
+    }
 }

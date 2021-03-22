@@ -173,10 +173,10 @@ class SimilarityFinderTest {
 
         int[] seq1 = {};
         int[] seq2 = {};
-        double expectedSearchInvocationCount = 1;
+        int expectedSearchInvocationCount = 0;
 
         // when
-        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+        similarityFinder.calculateJackardSimilarity(seq1, seq2);
 
         // then
         Field searchInvocationCountField =  sequenceSearcherMock.getClass().getDeclaredField("searchInvocationCount");

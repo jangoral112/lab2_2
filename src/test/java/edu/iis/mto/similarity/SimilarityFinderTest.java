@@ -123,4 +123,35 @@ class SimilarityFinderTest {
         assertEquals(expectedResult, result);
     }
 
+    @Test
+    public void shouldReturnZeroPointTwentyFiveWhenGivenIntersectingSequencesAndDifferentSequenceLengths() {
+        // give
+        SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> {
+            if(Arrays.equals(sequence, new int[] {10, 4, 7, 22, 123, 0}) == false) {
+                return null;
+            }
+
+            if(elem == 4) {
+                return SearchResult.builder().withFound(true).build();
+            } else if (elem == 22) {
+                return SearchResult.builder().withFound(true).build();
+            } else if (elem == 88) {
+                return SearchResult.builder().withFound(false).build();
+            } else if (elem == 99) {
+                return SearchResult.builder().withFound(false).build();
+            }
+
+            return null;
+        });
+
+        int[] seq1 = {4, 22, 88, 99};
+        int[] seq2 = {10, 4, 7, 22, 123, 0};
+        double expectedResult = 0.25;
+
+        // when
+        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        assertEquals(expectedResult, result);
+    }
 }

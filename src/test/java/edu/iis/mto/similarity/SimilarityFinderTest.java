@@ -73,7 +73,22 @@ class SimilarityFinderTest {
 
         // then
         assertEquals(expectedResult, result);
+    }
 
+    @Test
+    void shouldReturnZeroWhenSequencesHaveNoCommonElements() {
+        // give
+        SimilarityFinder similarityFinder = new SimilarityFinder((elem, sequence) -> SearchResult.builder().withFound(false).build());
+
+        int[] seq1 = {1, 2, 3};
+        int[] seq2 = {4, 5, 6};
+        double expectedResult = 0;
+
+        // when
+        double result = similarityFinder.calculateJackardSimilarity(seq1, seq2);
+
+        // then
+        assertEquals(expectedResult, result);
     }
 
 }
